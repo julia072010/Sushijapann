@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>寿司ジャパン</title>
+  <link rel="icon" href="sushilogo.ico" type="image/x-icon">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Noto+Serif+JP&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Serif JP', serif;
+      background: #111;
+      color: #eec0e1; /* Changed body text color */
+      line-height: 1.7;
+      transition: 0.5s;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: #eec0e1; /* Link text color matches h1 */
+      font-weight: bold;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    header {
+      background: #000;
+      padding: 30px 20px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      font-family: 'Sawarabi Mincho', serif;
+      font-size: 3rem;
+      color: #eec0e1; /* Keeping the same color for header */
+      animation: pulse 2s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+
+      100% {
+        transform: scale(1.05);
+      }
+    }
+
+    nav {
+      margin-top: 10px;
+    }
+
+    nav a {
+      margin: 0 12px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    section {
+      padding: 60px 20px;
+      min-height: 80vh;
+      display: none;
+      position: relative;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    section h2 {
+      font-family: 'Sawarabi Mincho', serif;
+      font-size: 2.2rem;
+      border-left: 5px solid #eec0e1; /* Subheadings color */
+      padding-left: 12px;
+      margin-bottom: 20px;
+    }
+
+    section .content-card {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.6s forwards;
+      animation-delay: 0.2s;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    section p {
+      font-size: 1rem;
+      text-align: justify;
+      color: #eec0e1; /* Added color to paragraphs */
+    }
+
+    .content-card {
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px auto;
+      max-width: 1000px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s;
+    }
+
+    .content-card:hover {
+      transform: scale(1.02);
+    }
+
+    .content-card img {
+      width: 100%;
+      border-radius: 12px;
+      margin-top: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .dish {
+      display: flex;
+      gap: 20px;
+      background: #1a1a1a;
+      border-radius: 12px;
+      overflow: hidden;
+      padding: 15px;
+      align-items: center;
+      color: #eee;
+      transition: 0.3s;
+    }
+
+    .dish img {
+      width: 200px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+
+    .dish .dish-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dish h3 {
+      margin: 0 0 10px 0;
+      font-size: 1.4rem;
+      color: #eec0e1; /* Heading for dishes */
+    }
+
+    .dish p {
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+      color: #eec0e1; /* Dish description text color */
+    }
+
+    .dish button {
+      background: #eec0e1;
+      color: #111;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .dish:hover {
+      transform: scale(1.03);
+    }
+
+    #cart {
+      position: fixed;
+      right: 20px;
+      top: 120px;
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 10px;
+      width: 250px;
+      max-height: 70vh;
+      overflow-y: auto;
+      z-index: 20;
+    }
+
+    #cart h3 {
+      margin-bottom: 10px;
+      color: #eec0e1; /* Cart section heading color */
+    }
+
+    #cart button {
+      margin-top: 10px;
+      width: 100%;
+      background: #eec0e1;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #111; /* Cart button text color */
+    }
+
+    #checkoutModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+    }
+
+    #checkoutModal div {
+      background: #1a1a1a;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+      color: #eee; /* Checkout text color */
+      position: relative;
+    }
+
+    #checkoutModal button {
+      margin-top: 15px;
+      background: #eec0e1;
+      color: #111;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #checkoutModal h3 {
+      margin-bottom: 15px;
+      color: #eec0e1; /* Checkout modal heading color */
+    }
+
+    #giftOutput {
+      color: #eec0e1; /* Gift card text color */
+    }
+
+    #sakura-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .sakura {
+      position: absolute;
+      background: #eec0e1;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      opacity: 0.7;
+    }
+
+    @media (max-width: 768px) {
+      .dish {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .dish img {
+        width: 100%;
+        height: auto;
+      }
+
+      .content-card img {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+<h1>Sυʂԋι Jαραɳ</h1>
+<nav>
+<a onclick="showPage('home')">Hσɱҽ</a>
+<a onclick="showPage('menu')">Mҽɳυ</a>
+<a onclick="showPage('delivery')">Dҽʅιʋҽɾყ</a>
+<a onclick="showPage('about')">AႦσυƚ</a>
+<a onclick="showPage('contact')">Cσɳƚαƈƚ</a>
+<a onclick="showPage('giftcard')">Gιϝƚ Cαɾԃ</a>
+<a onclick="showPage('history')">Hιʂƚσɾყ</a>
+<a onclick="showPage('philosophy')">Pԋιʅσʂσρԋყ</a>
+<a onclick="showPage('terms')">Tҽɾɱʂ & Cσɳԃιƚισɳʂ</a>
+</nav>
+</header>
+<div id="cart">
+<h3>Cart</h3>
+<div id="cart-items"></div>
+<strong>Total: $<span id="cart-total">0</span></strong><br><br>
+<button onclick="checkout()">Checkout</button>
+</div>
+<div id="checkoutModal">
+<div>
+<h3>Checkout Receipt</h3>
+<pre id="checkoutContent"></pre>
+<button onclick="closeCheckout()">Close</button>
+</div>
+</div>
+<div id="sakura-container"></div>
+<section id="home" class="active">
+<h2>Welcome to Sushi Japan</h2>
+<div class="content-card">
+<p>Step into the world of Sushi Japan, where tradition meets artistry. Every piece of sushi tells a story, from the bustling fish markets of Tokyo to the elegant presentation on your plate. Experience authentic flavors, meticulously crafted by skilled chefs who have honed their craft over decades. Here, dining is more than a meal—it’s a journey through Japanese culture, heritage, and taste.</p>
+</div>
+<div class="content-card">
+<p>We use only the freshest ingredients, selecting the finest fish and produce daily. Our philosophy is rooted in respect for the ingredients and dedication to technique, ensuring each bite delivers harmony, balance, and delight. Whether you are savoring our delicate nigiri, exploring our creative rolls, or enjoying a vegetarian option, every dish is a masterpiece, beautifully arranged to highlight the natural colors and textures of Japan's finest ingredients.</p>
+</div>
+<div class="content-card">
+<p>Join us at Sushi Japan for a unique culinary experience that combines elegance, tradition, and modern creativity. Let your taste buds explore subtle flavors, exquisite textures, and the visual beauty of Japanese cuisine. Our welcoming atmosphere invites you to relax, enjoy, and immerse yourself in the art of sushi. We also provide sake pairings and traditional Japanese teas to complement each dish perfectly.</p>
+</div>
+<div class="content-card" style="text-align:center;">
+<a href="https://ibb.co/xt1sVwcH"><img src="https://i.ibb.co/tTqhynNX/sushi-japan.jpg" alt="sushi-japan" border="0"></a>
+</div>
+</section>
+<section id="menu">
+<h2>Our Menu</h2>
+<div class="menu-grid">
+<div class="dish">
+<a href="https://ibb.co/27fqGQ8K"><img src="https://i.ibb.co/Fbj6RMs7/spicy-tuna-roll.jpg" alt="spicy-tuna-roll" border="0"></a>
+<div class="dish-text">
+<h3>Spicy Tuna Roll</h3>
+<p>Fresh tuna mixed with our signature spicy sauce, rolled with crisp cucumber and premium sushi rice. Perfect balance of heat and flavor, ideal for spice lovers and sushi enthusiasts alike.</p>
+<button onclick="addToCart('Spicy Tuna Roll',12)">Add to Cart - $12</button>
+</div>
+</div>
+<div class="dish">
+<a href="https://ibb.co/Q35P384X"><img src="https://i.ibb.co/MxXcx8m9/salmon-nigiri.jpg" alt="salmon-nigiri" border="0"></a>
+<div class="dish-text">
+<h3>Salmon Nigiri</h3>
+<p>Delicate slices of fresh salmon on a hand-formed bed of seasoned rice. A traditional favorite celebrated for its simplicity, freshness, and melt-in-your-mouth texture.</p>
+<button onclick="addToCart('Salmon Nigiri',10)">Add to Cart - $10</button>
+</div>
+</div>
+<div class="dish">
+<a href="https://ibb.co/zhZKnqRP"><img src="https://i.ibb.co/rGHn7D65/vegetarian-sushi-roll.jpg" alt="vegetarian-sushi-roll" border="0"></a>
+<div class="dish-text">
+<h3>Vegetarian Sushi Roll</h3>
+<p>A vibrant assortment of seasonal vegetables rolled in premium sushi rice and nori. Healthy, fresh, and bursting with natural flavors for a guilt-free sushi experience.</p>
+<button onclick="addToCart('Vegetarian Sushi Roll',9)">Add to Cart - $9</button>
+</div>
+</div>
+<div class="dish">
+<a href="https://ibb.co/BKNQbkPS"><img src="https://i.ibb.co/S7rMbSx9/sushi-set.jpg" alt="sushi-set" border="0"></a>
+<div class="dish-text">
+<h3>Sushi Set</h3>
+<p>A carefully curated set of nigiri and rolls, perfect for sharing or indulging. Combines classic flavors with modern creativity for a complete dining experience.</p>
+<button onclick="addToCart('Sushi Set',25)">Add to Cart - $25</button>
+</div>
+</div>
+<div class="dish">
+<a href="https://ibb.co/SW3dcj1"><img src="https://i.ibb.co/1hmdMgp/sushi-plate.jpg" alt="sushi-plate" border="0"></a>
+<div class="dish-text">
+<h3>Sushi Plate</h3>
+<p>An elegant plate featuring a variety of our finest sushi selections, ideal for a complete and satisfying meal, highlighting freshness and artistry.</p>
+<button onclick="addToCart('Sushi Plate',18)">Add to Cart - $18</button>
+</div>
+</div>
+<div class="dish">
+<a href="https://ibb.co/dwZDsyjR"><img src="https://i.ibb.co/7dhKxFjq/sushi-fish.jpg" alt="sushi-fish" border="0"></a>
+<div class="dish-text">
+<h3>Sushi Fish</h3>
+<p>Freshest fish sourced daily from trusted suppliers. Served simply or as part of the chef's special creations to bring out the purest flavor.</p>
+<button onclick="addToCart('Sushi Fish',15)">Add to Cart - $15</button>
+</div>
+</div>
+<div class="dish">
+<a href="https://ibb.co/5x8MpZCT"><img src="https://i.ibb.co/x8jC9Zwh/sushi-chef.jpg" alt="sushi-chef" border="0"></a>
+<div class="dish-text">
+<h3>Sushi Chef Special</h3>
+<p>Let the chef surprise you with seasonal ingredients and expert preparation. A must-try for sushi enthusiasts seeking a unique and delightful experience.</p>
+<button onclick="addToCart('Sushi Chef Special',30)">Add to Cart - $30</button>
+</div>
+</div>
+<div class="dish">
+<a href="https://ibb.co/GQDC4BDc"><img src="https://i.ibb.co/pjT4BGTJ/sushi-people.jpg" alt="sushi-people" border="0"></a>
+<div class="dish-text">
+<h3>Chef's Signature Roll</h3>
+<p>Our signature roll made with precision and passion. Every bite is a celebration of flavor, technique, and the artistry of sushi making.</p>
+<button onclick="addToCart('Chef\'s Signature Roll',14)">Add to Cart - $14</button>
+</div>
+</div>
+<div class="dish">
+<a href="https://ibb.co/tPP2pqBm"><img src="https://i.ibb.co/rffp2xk7/soy-sauce.jpg" alt="soy-sauce" border="0"></a>
+<div class="dish-text">
+<h3>Premium Soy Sauce</h3>
+<p>Enhance your sushi experience with our premium soy sauce, specially brewed for depth, umami, and balance with every dish.</p>
+<button onclick="addToCart('Premium Soy Sauce',5)">Add to Cart - $5</button>
+</div>
+</div>
+</div>
+</section>
+<section id="delivery">
+<h2>Delivery</h2>
+<div class="content-card">
+<p>We offer fast and reliable delivery to your doorstep. Orders are prepared fresh and dispatched promptly, ensuring your sushi arrives at peak quality. Our delivery team is trained to handle food carefully so that each order arrives exactly as it would in the restaurant. Delivery is available in designated areas, and we use eco-friendly packaging to preserve taste and freshness while being kind to the environment.</p>
+</div>
+<div class="content-card">
+<p>For special occasions, you can pre-order sushi platters for parties, events, and corporate gatherings. Enjoy the convenience of our online ordering system and track your delivery in real-time. We ensure that every order maintains the elegance, freshness, and flavor that Sushi Japan is known for.</p>
+</div>
+<div class="content-card" style="text-align:center;">
+<a href="https://ibb.co/gLyrzT4b"><img src="https://i.ibb.co/gLyrzT4b/sushi-delivery.jpg" alt="sushi-delivery" border="0"></a>
+</div>
+</section>
+<section id="about">
+<h2>About Us</h2>
+<div class="content-card">
+<p>Sushi Japan is dedicated to bringing authentic Japanese sushi to our community. Our chefs train extensively in traditional techniques, combining the freshest ingredients with modern presentation. Every dish is created with care, respecting the cultural heritage of Japan while embracing creativity and innovation. Our goal is to provide not only food but an unforgettable experience that delights the senses.</p>
+</div>
+<div class="content-card">
+<p>We believe in building a relationship with our customers based on trust, consistency, and excellence. Our chefs are passionate about sushi and continuously explore new flavors, techniques, and combinations to offer a menu that is both traditional and exciting. Whether you dine in or enjoy delivery, Sushi Japan promises the highest quality in every bite.</p>
+</div>
+<div class="content-card" style="text-align:center;">
+<a href="https://ibb.co/m55B7GY3"><img src="https://i.ibb.co/CKKtFzXf/sushi-chefs.jpg" alt="sushi-chefs" border="0"></a>
+</div>
+</section>
+<section id="contact">
+<h2>Contact</h2>
+<div class="content-card">
+<p>We would love to hear from you! Whether it's a question, feedback, or reservation, you can reach us via:</p>
+<ul>
+<li>Email: info@sushijapan.com</li>
+<li>Phone: +123-456-7890</li>
+<li>Address: 123 Sushi Street, Tokyo City</li>
+</ul>
+</div>
+<div class="content-card" style="text-align:center;">
+<a href="https://i.ibb.co/jZkdq9kL/sushi-map.jpg"><img src="https://i.ibb.co/jZkdq9kL/sushi-map.jpg" alt="sushi-map" border="0"></a>
+</div>
+</section>
+<section id="giftcard">
+<h2>Gift Card Generator</h2>
+<div class="content-card">
+<p>Create a personalized gift card!</p>
+<form id="giftForm">
+  Name: <input type="text" id="giftName" required><br><br>
+  Discount (%): <input type="number" id="giftPercent" min="1" max="100" required><br><br>
+  <button type="submit">Generate Gift Card</button>
+</form>
+<div id="giftOutput" style="margin-top:20px;"></div>
+</div>
+</section>
+<section id="history">
+<h2>Our History</h2>
+<div class="content-card">
+<p>Founded in 2005, Sushi Japan has grown from a small neighborhood sushi bar to a beloved restaurant known for authentic flavors and creative presentations. Our founders dreamed of sharing the art of sushi with the local community and bringing a taste of Japan to every customer.</p>
+</div>
+<div class="content-card">
+<p>Over the years, we have expanded our menu, refined our techniques, and built relationships with trusted suppliers. Sustainability, quality, and innovation guide every decision we make. Today, Sushi Japan is recognized for its dedication to culinary excellence and for creating a welcoming space where food lovers can gather and enjoy genuine Japanese cuisine.</p>
+</div>
+<div class="content-card" style="text-align:center;">
+<a href="https://ibb.co/bMq3jLz2"><img src="https://i.ibb.co/bMq3jLz2/sushi-history.jpg" alt="sushi-history" border="0"></a>
+</div>
+</section>
+<section id="philosophy">
+<h2>Our Philosophy</h2>
+<div class="content-card">
+<p>We believe sushi is more than food—it is an art form. Every ingredient is respected, every preparation meticulous. Our philosophy emphasizes simplicity, harmony, and balance. Freshness, presentation, and taste must align perfectly, creating a moment of pleasure and reflection for every diner.</p>
+</div>
+<div class="content-card">
+<p>We honor traditional Japanese methods while embracing innovation, ensuring each dish respects heritage yet excites the senses. Sustainability, care for ingredients, and attention to detail are at the heart of our culinary approach. At Sushi Japan, eating is an experience, a journey, and a celebration of craftsmanship.</p>
+</div>
+<div class="content-card" style="text-align:center;">
+<a href="https://ibb.co/1YNrd66D"><img src="https://i.ibb.co/1YNrd66D/sushi-philosophy.jpg" alt="sushi-philosophy" border="0"></a>
+</div>
+</section>
+<section id="terms">
+<h2>Terms & Conditions</h2>
+<div class="content-card">
+<p>Please read our terms and conditions carefully. By ordering from Sushi Japan, you agree to our policies regarding payments, refunds, delivery, and privacy. We strive to provide clear communication, high-quality products, and excellent service. Your satisfaction is our priority, and we are committed to ensuring that your dining experience with us is safe, reliable, and enjoyable.</p>
+</div>
+</section>
+<script>
+let cart = [];
+let activeGiftCard = null;
+
+function showPage(page) {
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  document.getElementById(page).classList.add('active');
+}
+
+function addToCart(item, price) {
+  cart.push({ item, price });
+  renderCart();
+}
+
+function renderCart() {
+  const container = document.getElementById('cart-items');
+  container.innerHTML = '';
+  let total = 0;
+  cart.forEach(c => {
+    total += c.price;
+    const div = document.createElement('div');
+    div.textContent = `${c.item} - $${c.price}`;
+    container.appendChild(div);
+  });
+  document.getElementById('cart-total').textContent = total.toFixed(2);
+}
+
+function checkout() {
+  if (cart.length === 0) {
+    alert("Your cart is empty!");
+    return;
+  }
+
+  const checkoutHTML = `
+    <div style="background:#1a1a1a;padding:30px;border-radius:12px;max-width:500px;margin:auto;">
+      <h3 style="color:#eec0e1;">Checkout</h3>
+      <form id="checkoutForm">
+        <label>Full Name:</label><br>
+        <input type="text" id="checkoutName" required style="width:100%;padding:10px;margin:8px 0;border-radius:6px;border:1px solid #ccc;"><br>
+
+        <label>Delivery Address:</label><br>
+        <input type="text" id="checkoutAddress" required style="width:100%;padding:10px;margin:8px 0;border-radius:6px;border:1px solid #ccc;"><br>
+
+        <label>Email:</label><br>
+        <input type="email" id="checkoutEmail" required style="width:100%;padding:10px;margin:8px 0;border-radius:6px;border:1px solid #ccc;"><br>
+
+        <label>Card Number:</label><br>
+        <input type="text" id="checkoutCard" maxlength="16" placeholder="1111 2222 3333 4444" required style="width:100%;padding:10px;margin:8px 0;border-radius:6px;border:1px solid #ccc;"><br>
+
+        <label>Gift Card Code (optional):</label><br>
+        <input type="text" id="giftCode" placeholder="Enter your gift card code" style="width:100%;padding:10px;margin:8px 0;border-radius:6px;border:1px solid #ccc;"><br>
+
+        <button type="submit" style="background:#eec0e1;color:#111;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;margin-top:10px;">Complete Payment</button>
+      </form>
+    </div>
+  `;
+  const modal = document.getElementById('checkoutModal');
+  modal.innerHTML = checkoutHTML;
+  modal.style.display = 'flex';
+
+  document.getElementById('checkoutForm').addEventListener('submit', processCheckout);
+}
+
+function processCheckout(e) {
+  e.preventDefault();
+
+  const name = document.getElementById('checkoutName').value.trim();
+  const address = document.getElementById('checkoutAddress').value.trim();
+  const email = document.getElementById('checkoutEmail').value.trim();
+  const card = document.getElementById('checkoutCard').value.trim();
+  const giftCode = document.getElementById('giftCode').value.trim();
+
+  if (!name || !address || !email || !card) {
+    alert("Please fill in all required fields!");
+    return;
+  }
+
+  let total = cart.reduce((sum, c) => sum + c.price, 0);
+  let discount = 0;
+
+  if (giftCode && activeGiftCard && giftCode === activeGiftCard.code) {
+    discount = activeGiftCard.discount;
+  }
+
+  const finalTotal = total - (total * discount / 100);
+
+  const confirmationMsg = `
+    ✅ Payment Successful!
+    ----------------------------
+    Name: ${name}
+    Address: ${address}
+    Email: ${email}
+    ----------------------------
+    Items Purchased: ${cart.length}
+    Discount Applied: ${discount}%
+    Total Paid: $${finalTotal.toFixed(2)}
+    ----------------------------
+    Thank you for ordering with Sushi Japan!
+  `;
+
+  alert(confirmationMsg);
+  cart = [];
+  renderCart();
+  document.getElementById('checkoutModal').style.display = 'none';
+}
+
+function closeCheckout() {
+  document.getElementById('checkoutModal').style.display = 'none';
+}
+
+document.getElementById('giftForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const name = document.getElementById('giftName').value.trim();
+  const percent = parseFloat(document.getElementById('giftPercent').value);
+  const output = document.getElementById('giftOutput');
+
+  if (!name || isNaN(percent) || percent <= 0 || percent > 100) {
+    alert("Please enter a valid name and discount percentage (1–100).");
+    return;
+  }
+
+  const confirmPay = confirm(`The gift card for ${name} costs $10. Proceed to payment?`);
+  if (!confirmPay) return;
+
+  const paymentInfo = prompt("Enter your 16-digit card number to pay:");
+  if (!paymentInfo || paymentInfo.length < 12) {
+    alert("Invalid payment details. Please try again.");
+    return;
+  }
+
+  const code = `GIFT-${Math.floor(1000 + Math.random() * 9000)}`;
+  activeGiftCard = { name, discount: percent, code };
+
+  output.innerHTML = `
+    <div style="background:#eec0e1;color:white;padding:20px;border-radius:12px;max-width:400px;text-align:center;font-weight:bold;box-shadow:0 5px 15px rgba(0,0,0,0.5);animation:scaleUp 0.5s ease;">
+      <h3 style="color:white;">🎁 Sushi Japan Gift Card</h3>
+      <p><strong style="color:white;">Recipient:</strong> <span style="color:white;">${name}</span></p>
+      <p><strong style="color:white;">Discount:</strong> <span style="color:white;">${percent}%</span></p>
+      <p><strong style="color:white;">Code:</strong> <span style="color:white;">${code}</span></p>
+      <p style="color:white;">Use this code at checkout to apply your discount.</p>
+      <p style="color:#444;font-size:0.9rem;">(Gift card purchase confirmed and paid.)</p>
+    </div>`;
+});
+
+
+function createPetal() {
+  const container = document.getElementById('sakura-container');
+  const petal = document.createElement('div');
+  petal.classList.add('sakura');
+
+  const size = Math.random() * 10 + 5;
+  petal.style.width = `${size}px`;
+  petal.style.height = `${size}px`;
+  petal.style.left = Math.random() * window.innerWidth + 'px';
+  petal.style.top = '-20px';
+  petal.style.position = 'absolute';
+  petal.style.background = '#eec0e1';
+  petal.style.borderRadius = '50%';
+  petal.style.opacity = Math.random() * 0.8 + 0.2;
+  petal.style.zIndex = 0;
+
+  container.appendChild(petal);
+
+  let fallSpeed = 1 + Math.random() * 2;
+  let drift = (Math.random() - 0.5) * 2;
+  let rotation = Math.random() * 360;
+
+  function animatePetal() {
+    const top = parseFloat(petal.style.top);
+    const left = parseFloat(petal.style.left);
+    petal.style.top = `${top + fallSpeed}px`;
+    petal.style.left = `${left + drift}px`;
+    rotation += 2;
+    petal.style.transform = `rotate(${rotation}deg)`;
+
+    if (top > window.innerHeight) {
+      petal.remove();
+    } else {
+      requestAnimationFrame(animatePetal);
+    }
+  }
+  requestAnimationFrame(animatePetal);
+}
+setInterval(createPetal, 120);
+</script>
+</body>
+</html>
+</script>
+<style>@keyframes scaleUp{0%{transform:scale(0);}100%{transform:scale(1);}}</style>
+</body>
+</html>
