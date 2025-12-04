@@ -77,7 +77,6 @@ input, select, textarea { outline:none; }
 <div id="checkoutModal"></div>
 <div id="sakura-container"></div>
 
-<!-- HOME -->
 <section id="home" class="active">
 <h2>Welcome to Sushi Japan</h2>
 <div class="pair-container">
@@ -96,11 +95,9 @@ input, select, textarea { outline:none; }
 </div>
 </section>
 
-<!-- MENU -->
 <section id="menu">
 <h2>Our Menu</h2>
 <div class="menu-grid">
-<!-- Add all dishes -->
 <div class="dish"><img src="https://i.ibb.co/Fbj6RMs7/spicy-tuna-roll.jpg" alt="spicy-tuna-roll">
 <div class="dish-text"><h3>Spicy Tuna Roll</h3><p>Fresh tuna with signature spicy sauce, rolled with crisp cucumber and premium sushi rice.</p>
 <button onclick="addToCart('Spicy Tuna Roll',12)">Add to Cart - $12</button></div></div>
@@ -131,7 +128,6 @@ input, select, textarea { outline:none; }
 </div>
 </section>
 
-<!-- DELIVERY -->
 <section id="delivery">
 <h2>Delivery</h2>
 <div class="pair-container">
@@ -143,7 +139,6 @@ input, select, textarea { outline:none; }
 </div>
 </section>
 
-<!-- ABOUT -->
 <section id="about">
 <h2>About Us</h2>
 <div class="pair-container">
@@ -155,7 +150,6 @@ input, select, textarea { outline:none; }
 </div>
 </section>
 
-<!-- CONTACT -->
 <section id="contact">
 <h2>Contact</h2>
 <div class="pair-container">
@@ -173,7 +167,6 @@ input, select, textarea { outline:none; }
 </div>
 </section>
 
-<!-- GIFT CARD -->
 <section id="giftcard">
 <h2>Gift Card Generator</h2>
 <div class="pair-container" style="justify-content:center; align-items:flex-start;">
@@ -192,7 +185,6 @@ input, select, textarea { outline:none; }
 </div>
 </section>
 
-<!-- HISTORY -->
 <section id="history">
 <h2>Our History</h2>
 <div class="pair-container">
@@ -204,7 +196,6 @@ input, select, textarea { outline:none; }
 </div>
 </section>
 
-<!-- PHILOSOPHY -->
 <section id="philosophy">
 <h2>Our Philosophy</h2>
 <div class="pair-container">
@@ -216,7 +207,6 @@ input, select, textarea { outline:none; }
 </div>
 </section>
 
-<!-- TERMS -->
 <section id="terms">
 <h2>Terms & Conditions</h2>
 <div class="pair-container" style="justify-content:flex-start;">
@@ -227,10 +217,10 @@ input, select, textarea { outline:none; }
 </section>
 
 <script>
-// PAGE NAV
+
 function showPage(page){ document.querySelectorAll('section').forEach(s=>s.classList.remove('active')); document.getElementById(page).classList.add('active'); }
 
-// CART
+
 let cart=[]; 
 function addToCart(item,price){ cart.push({item,price}); renderCart(); }
 function renderCart(){
@@ -239,7 +229,7 @@ function renderCart(){
   document.getElementById('cart-total').textContent=total.toFixed(2);
 }
 
-// CHECKOUT
+
 function checkout(){
   if(cart.length===0){alert("Cart is empty!"); return;}
   let modal=document.getElementById('checkoutModal'); modal.style.display='flex';
@@ -257,7 +247,6 @@ function checkout(){
 }
 function completeCheckout(e){ e.preventDefault(); alert("Payment successful! Order placed."); cart=[]; renderCart(); document.getElementById('checkoutModal').style.display='none'; }
 
-// GIFT CARD
 document.getElementById('giftForm').addEventListener('submit', function(e) {
   e.preventDefault();
   const name = document.getElementById('giftName').value.trim();
@@ -292,7 +281,6 @@ document.getElementById('giftForm').addEventListener('submit', function(e) {
     </div>`;
 });
 
-// SAKURA PETALS
 function createPetal() {
   const container = document.getElementById('sakura-container');
   const petal = document.createElement('div');
